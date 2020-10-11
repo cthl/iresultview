@@ -1,0 +1,14 @@
+{
+  "name": "iResultView",
+  "version": "0.1",
+  "description": "Enhanced iRacing results",
+  "manifest_version": 2,
+
+  "content_scripts": [{
+    "js": ["content.js"],
+    "matches": ["https://members.iracing.com/membersite/member/EventResult.do*"],
+    "run_at": "document_idle"
+  }],
+
+  "web_accessible_resources": ["iresultview.js"]
+}
