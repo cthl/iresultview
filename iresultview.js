@@ -63,13 +63,13 @@ function update_weather(result)
   b.appendChild(document.createTextNode("Dynamic Weather Details:"));
   p.appendChild(document.createElement("br"));
   // Temperature
-  var temp_unit = get_temp_unit(result.weather.tempUnits);
-  p.appendChild(document.createTextNode("Temperature: " + result.weather.tempValue + temp_unit));
+  var temp_str = get_temp_str(result.weather.tempValue, result.weather.tempUnits);
+  p.appendChild(document.createTextNode("Temperature: " + temp_str));
   p.appendChild(document.createElement("br"));
   // Wind
   var wind_dir = get_wind_dir(result.weather.windDir);
-  var speed_unit = get_speed_unit(result.weather.windSpeedUnits);
-  p.appendChild(document.createTextNode("Wind: " + wind_dir + " @ " + result.weather.windSpeedValue + speed_unit));
+  var speed_str = get_speed_str(result.weather.windSpeedValue, result.weather.windSpeedUnits);
+  p.appendChild(document.createTextNode("Wind: " + wind_dir + " @ " + speed_str));
   p.appendChild(document.createElement("br"));
   // Humidity
   p.appendChild(document.createTextNode("Humidity: " + result.weather.RH + "%"));
@@ -83,11 +83,56 @@ function update_weather(result)
   td.appendChild(p);
 }
 
-function get_temp_unit(unit_id)
+function get_temp_str(temp, unit_id)
 {
-  var units = ["\u2109" /* deg. F */, "\u2103" /* deg. C */];
-  
-  return units[unit_id];
+  var temp_C, temp_F;
+
+  if (unit_id == 0) {
+    temp_F = temp;
+    temp_C = temp_F2C(temp);
+  }
+  else {
+    temp_C = temp;
+    temp_F = temp_C2F(temp);
+  }
+
+  return temp_C + "\u2103 (" + temp_F + "\u2109)";
+}
+
+function temp_F2C(temp_F)
+{
+  return ((temp_F - 32.0)*5.0/9.0).toFixed(0);
+}
+
+function temp_C2F(temp_C)
+{
+  return (temp_C*9.0/5.0 + 32.0).toFixed(0);
+}
+
+function get_speed_str(speed, unit_id)
+{
+  var speed_kph, speed_mph;
+
+  if (unit_id == 0) {
+    speed_mph = speed;
+    speed_kph = speed_mph2kph(speed);
+  }
+  else {
+    speed_kph = speed;
+    speed_mph = speed_kph2mph(speed);
+  }
+
+  return speed_kph + "kph (" + speed_mph + "mph)";
+}
+
+function speed_mph2kph(speed)
+{
+  return (1.60934*speed).toFixed(0);
+}
+
+function speed_kph2mph(speed)
+{
+  return (speed/1.60934).toFixed(0);
 }
 
 function get_wind_dir(wind_dir_id)
