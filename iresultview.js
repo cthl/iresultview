@@ -1,9 +1,14 @@
 // Wait for result tables to become available.
+var tbody_race = null;
+var tbody_qual = null;
+var tbody_prac = null;
 var checker = setInterval(check_tables, 100);
 function check_tables()
 {
-  var tbody = document.querySelector("#resultsDiv > div.single-results-container.window-0 > table > tbody");  
-  if (tbody) {
+  tbody_race = document.querySelector("#resultsDiv > div.single-results-container.window-0 > table > tbody");  
+  tbody_qual = document.querySelector("#resultsDiv > div.single-results-container.window--1 > table > tbody");
+  tbody_prac = document.querySelector("#resultsDiv > div.single-results-container.window--2 > table > tbody");
+  if (tbody_race && tbody_qual && tbody_prac) {
     clearInterval(checker);
     iresultview_main();
   }
@@ -17,11 +22,8 @@ function iresultview_main()
   }
 
   // Highlight own result.
-  var tbody_race = document.querySelector("#resultsDiv > div.single-results-container.window-0 > table > tbody");
   highlight_self(result, tbody_race);
-  var tbody_qual = document.querySelector("#resultsDiv > div.single-results-container.window--1 > table > tbody");
   highlight_self(result, tbody_qual);
-  var tbody_prac = document.querySelector("#resultsDiv > div.single-results-container.window--2 > table > tbody");
   highlight_self(result, tbody_prac);
 
   // Add divisions for laptime charts.
@@ -118,6 +120,8 @@ function highlight_self(result, tbody)
       // Check if the current row shows the user's own result.
       if (data.custid == result.custid) {
         tbody.rows[i].bgColor = "#a1e7ed";
+        // Make sure that dark table rows do not overwrite the background color.
+        tbody.rows[i].className = "none";
       }
     }
   }
