@@ -131,7 +131,7 @@ function draw_laptime_chart(div, session_id, time_id, title)
 {
   // Create the array of iRatings and laptimes.
   var num_drivers = result.sessionResults[session_id].length;
-  var raw_data = [["iRating", "Laptime"]];
+  var raw_data = [["iRating", "Laptime", "Laptime (Self)"]];
 
   var max_time = 0.0;
   var min_time = 999999.0;
@@ -155,7 +155,14 @@ function draw_laptime_chart(div, session_id, time_id, title)
       min_time = time;
     }
 
-    raw_data.push([ir, time]);
+    if (driver_result.custid == result.custid) {
+      // Add user's laptime to its own column so it is plotted differently.
+      raw_data.push([ir, null, time]);
+    }
+    else {
+      // Add other driver's laptime.
+      raw_data.push([ir, time, null]);
+    }
   }
 
   // Create ticks for the laptime axis.
@@ -181,7 +188,11 @@ function draw_laptime_chart(div, session_id, time_id, title)
     width: 400,
     height: 400,
     lineWidth: 0,
-    pointSize: 3
+    colors: ["blue", "magenta"],
+    series: {
+      0: {pointShape: "circle", pointSize: 3},
+      1: {pointShape: "star", pointSize: 10}
+    }
   };
 
   // Draw the chart.
