@@ -176,7 +176,23 @@ function draw_laptime_chart(div, session_id, time_id, title)
 {
   // Create the array of iRatings and laptimes.
   var num_drivers = result.sessionResults[session_id].length;
-  var raw_data = [["iRating", "Laptime", "Laptime (Self)"]];
+
+  // Check if the user participated in the race.
+  var participated = false;
+  for (i = 0; i < num_drivers; i++) {
+    var driver_result = result.sessionResults[session_id][i];
+    if (driver_result.custid == result.custid) {
+      participated = true;
+    }
+  }
+
+  var raw_data;
+  if (participated) {
+    raw_data = [["iRating", "Laptime", "Laptime (Self)"]];
+  }
+  else {
+    raw_data = [["iRating", "Laptime"]];
+  }
 
   var max_time = 0.0;
   var min_time = 999999.0;
@@ -200,13 +216,18 @@ function draw_laptime_chart(div, session_id, time_id, title)
       min_time = time;
     }
 
-    if (driver_result.custid == result.custid) {
-      // Add user's laptime to its own column so it is plotted differently.
-      raw_data.push([ir, null, time]);
+    if (participated) {
+      if (driver_result.custid == result.custid) {
+        // Add user's laptime to its own column so it is plotted differently.
+        raw_data.push([ir, null, time]);
+      }
+      else {
+        // Add other driver's laptime.
+        raw_data.push([ir, time, null]);
+      }
     }
     else {
-      // Add other driver's laptime.
-      raw_data.push([ir, time, null]);
+      raw_data.push([ir, time]);
     }
   }
 
